@@ -259,3 +259,5 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+/src/EarthML.TemplyHeadless.Cli/output
+/src/EarthML.TemplyHeadless.Cli/tmphost

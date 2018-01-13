@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "EarthML.TemplyHeadless.Cli": {
+      "commandName": "Project",
+      "commandLineArgs": "-hw"
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "module": "amd",
+    "target": "es5",
+    "sourceMap": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "removeComments": false,
+    "noImplicitAny": false,
+    "suppressImplicitAnyIndexErrors": true,
+    "outDir": "artifacts/src",
+    "declarationDir": "artifacts/typings",
+    "declaration": true,
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "lib": [
+      "dom",
+      "es6", // updated from es5 to es6 to avoid "cannot find  name Map in index.d.ts JSHandle"
+      "es2015.promise"
+    ],
+
+  },
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules/*"
+  ]
+}
