@@ -1,0 +1,21 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "module": "amd",
+    "target": "es5",
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "outDir": "wwwroot",
+    "paths": {
+      "earthml-temply-headless/*": [ "node_modules/earthml-temply-headless/artifacts/typings" ]
+    },
+    "lib": [
+     "dom",
+      "es6", // updated from es5 to es6 to avoid "cannot find  name Map in index.d.ts JSHandle"
+      "es2015.promise"
+    ]
+  }, 
+  "exclude": [
+    "node_modules/*"
+  ]
+}

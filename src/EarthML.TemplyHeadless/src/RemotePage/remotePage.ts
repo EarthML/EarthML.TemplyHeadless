@@ -19,6 +19,10 @@ export class RemotePage {
 
     }
 
+    async run() {
+
+    }
+
     async helloWorld() {
         await this.initialize();
 

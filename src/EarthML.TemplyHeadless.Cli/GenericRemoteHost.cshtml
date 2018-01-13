@@ -1,0 +1,45 @@
+﻿
+<html>
+<head>
+    <script src="node_modules/requirejs/require.js"></script>
+</head>
+<body>
+
+
+    <script type="text/javascript">
+
+        function getParameterByName(name, url) {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
+
+        require.config({
+            paths: { 'earthml-temply-headless': 'node_modules/earthml-temply-headless/artifacts/src' },
+            packages: [
+                {
+                    name: "RemoteModule",
+                    location: getParameterByName("remote-location"),
+                    main:  getParameterByName("remote-main")
+
+                }
+            ]
+        });
+        
+        require(["RemoteModule"], (RemotePageModule) => {
+             
+            let rp = new RemotePageModule.default();
+
+            rp.initialize().then(() => {
+                rp.run();
+            });
+        })
+
+    </script>
+
+</body>
+</html>

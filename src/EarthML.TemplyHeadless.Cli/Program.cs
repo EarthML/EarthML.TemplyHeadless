@@ -7,10 +7,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.NodeServices;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Linq;
+using RazorLight;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
@@ -99,8 +101,14 @@ namespace EarthML.TemplyHeadless.Cli
     {
         static Task<int> Main(string[] args) => CommandLineApplication.ExecuteAsync<Program>(args);
 
-        [Option(Description = "The url for remote page")]
+        [Option(Description = "The url for remote page hosting")]
         private string Url { get; set; }
+
+        [Option(Description = "The url for remote page index.js", ShortName = "rm")]
+        private string RemotePageMain { get; set; } = "index";
+        [Option(Description = "The url for remote page index.js", ShortName = "rl")]
+        private string RemotePageLocation { get; set; }
+
         [Option(Description = "The folder to install node modules in", ShortName = "hf")]
         private string HostFolder { get; } = "tmphost";
 
@@ -114,7 +122,7 @@ namespace EarthML.TemplyHeadless.Cli
 
         private async Task<int> OnExecuteAsync(CommandLineApplication app)
         {
-            if (string.IsNullOrEmpty(Url) && !HelloWorld)
+            if (string.IsNullOrEmpty(Url) && string.IsNullOrEmpty(RemotePageLocation) && !HelloWorld)
             {
                 app.ShowHelp();
                 return 0;
@@ -127,44 +135,68 @@ namespace EarthML.TemplyHeadless.Cli
             InstallNPMPackage(HostFolder, "websocket");
             InstallNPMPackage(HostFolder, "earthml-temply-headless");
 
-            IWebHost host = null;
 
-            if (HelloWorld)
-            {
+            var engine = new RazorLightEngineBuilder()
+                .UseEmbeddedResourcesProject(typeof(Program))
+                .UseMemoryCachingProvider()
+                .Build();
 
-                host = new WebHostBuilder()
+
+            IWebHost host = new WebHostBuilder()
                     .UseKestrel()
 
                     .Configure(appbuilder =>
                     {
 
                         appbuilder.Use(async (context, next) =>
-                         {
+                        {
 
-                             if (context.Request.Path == "/")
-                             {
+                            if (context.Request.Path == "/hello-world")
+                            {
 
-                                 await context.Response.WriteAsync(@"<html><head><script src=""node_modules/requirejs/require.js""></script></head><body><script type=""text/javascript"">require.config({paths:{'earthml-temply-headless':'node_modules/earthml-temply-headless/artifacts/src'}}); require(['earthml-temply-headless/remotepage/remotepage'],(RemotePageModule)=>{console.log(RemotePageModule);let rp = new RemotePageModule.RemotePage(); rp.helloWorld(); })</script></body></html>");
-                                 return;
-                             }
+                                await context.Response.WriteAsync(@"<html><head><script src=""node_modules/requirejs/require.js""></script></head><body><script type=""text/javascript"">require.config({paths:{'earthml-temply-headless':'node_modules/earthml-temply-headless/artifacts/src'}}); require(['earthml-temply-headless/remotepage/remotepage'],(RemotePageModule)=>{console.log(RemotePageModule);let rp = new RemotePageModule.RemotePage(); rp.helloWorld(); })</script></body></html>");
+                                return;
+                            }
 
+                            if(context.Request.Path == "/")
+                            {
+                                try
+                                {
+                                     
+                                    string result = await engine.CompileRenderAsync("GenericRemoteHost.cshtml", new { Name = "John Doe" });
+                                    
+                                    await context.Response.WriteAsync(result);
 
-                             await next();
+                                }catch(Exception ex)
+                                {
+                                    Console.WriteLine(ex);
+                                }
+                                return;
+                            }
 
-                         });
+                            await next();
+
+                        });
 
                         appbuilder.UseStaticFiles(new StaticFileOptions { FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "tmphost")) });
                     })
                     .Build();
 
 
-                await host.StartAsync();
+            await host.StartAsync(); ;
 
-
+            if (HelloWorld)
+            {  
                 Url = host.ServerFeatures.Get<IServerAddressesFeature>().Addresses
-                     .Select(a => a.Replace("://+", "://localhost").Replace("[::]","127.0.0.1")).FirstOrDefault();
+                     .Select(a => a.Replace("://+", "://localhost").Replace("[::]","127.0.0.1")).FirstOrDefault() +"/hello-world";
             }
 
+            if (!string.IsNullOrEmpty(RemotePageLocation))
+            {
+                Url = host.ServerFeatures.Get<IServerAddressesFeature>().Addresses
+                    .Select(a => a.Replace("://+", "://localhost").Replace("[::]", "127.0.0.1")).FirstOrDefault() + $"?remote-main={RemotePageMain}&remote-location={WebUtility.UrlEncode(RemotePageLocation)}";
+            }
+            
 
             {
 

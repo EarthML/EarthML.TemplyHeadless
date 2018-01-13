@@ -12,6 +12,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "root", "root", "{3C739BFD-C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EarthML.TemplyHeadless", "src\EarthML.TemplyHeadless\EarthML.TemplyHeadless.csproj", "{CE431CFA-B50F-4305-B020-E3CB83401109}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{2C780E12-033D-4146-A767-07B7B538FD11}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleRemotePage", "samples\SimpleRemotePage\SimpleRemotePage.csproj", "{78625631-4DF2-45EB-8606-B616620EF976}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,9 +30,16 @@ Global
 		{CE431CFA-B50F-4305-B020-E3CB83401109}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE431CFA-B50F-4305-B020-E3CB83401109}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CE431CFA-B50F-4305-B020-E3CB83401109}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78625631-4DF2-45EB-8606-B616620EF976}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78625631-4DF2-45EB-8606-B616620EF976}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78625631-4DF2-45EB-8606-B616620EF976}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78625631-4DF2-45EB-8606-B616620EF976}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{78625631-4DF2-45EB-8606-B616620EF976} = {2C780E12-033D-4146-A767-07B7B538FD11}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AC2F1EB8-1EA1-488A-A2F4-FD290B6C4484}

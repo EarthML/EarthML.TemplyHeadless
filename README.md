@@ -19,8 +19,7 @@ This makes it ideal for hosting simple webpages/javascript files that generate v
 
 ## Examples
 
-Will be coming
-
+[Simple Remote Page](samples/SimpleRemotePage/README.md)
 
 ## Build 
 

@@ -2,7 +2,7 @@
   "profiles": {
     "EarthML.TemplyHeadless.Cli": {
       "commandName": "Project",
-      "commandLineArgs": "-hw"
+      "commandLineArgs": "--remote-page-main SimpleRemotePage --remote-page-location http://localhost:41440"
     }
   }
 }
