@@ -261,3 +261,4 @@ __pycache__/
 *.pyc
 /src/EarthML.TemplyHeadless.Cli/output
 /src/EarthML.TemplyHeadless.Cli/tmphost
+/src/EarthML.TemplyHeadless.Cli/out

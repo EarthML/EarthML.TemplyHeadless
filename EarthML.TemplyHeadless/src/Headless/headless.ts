@@ -209,6 +209,7 @@ export default async function (options: TemplyHeadlessOptions, callback: (error,
         logger.logInformation("ChromeInstance created with {headless} and arguments {@chromeHeadlessArguments}", options.headless, options.chromeHeadlessArguments);
 
         let page = await chromeInstance.newPage();
+        page.on('console', msg => console.log('PAGE LOG:', ...msg.args));
         page.setViewport(options.size);
 
         logger.logInformation("Chrome Page created and viewport set to {@size}", options.size);

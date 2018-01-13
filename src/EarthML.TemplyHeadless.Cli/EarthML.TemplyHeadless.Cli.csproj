@@ -21,4 +21,10 @@
     <Folder Include="output\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update=".dockerignore">
+      <DependentUpon>dockerfile</DependentUpon>
+    </None>
+  </ItemGroup>
+
 </Project>

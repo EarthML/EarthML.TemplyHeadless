@@ -120,6 +120,8 @@ namespace EarthML.TemplyHeadless.Cli
                 return 0;
             }
 
+       //     Directory.CreateDirectory(HostFolder);
+
             InstallNPMPackage(HostFolder, "requirejs");
             InstallNPMPackage(HostFolder, "puppeteer");
             InstallNPMPackage(HostFolder, "websocket");
@@ -138,19 +140,11 @@ namespace EarthML.TemplyHeadless.Cli
 
                         appbuilder.Use(async (context, next) =>
                          {
-                             if (context.Request.Path.StartsWithSegments("/temply"))
-                             {
-                                 var path = "../../EarthML.TemplyHeadless/artifacts/src" + context.Request.Path.Value.Substring("temply/".Length);
-
-                                 Console.WriteLine(Path.GetFullPath(path));
-                                 await context.Response.SendFileAsync(path);
-                                 return;
-                             }
 
                              if (context.Request.Path == "/")
                              {
 
-                                 await context.Response.WriteAsync(@"<html><head><script src=""node_modules/requirejs/require.js""></script></head><body><script type=""text/javascript"">require.config({paths:{'temply':'http://localhost:26664/'}}); require(['temply/remotepage/remotepage'],(RemotePageModule)=>{console.log(RemotePageModule);let rp = new RemotePageModule.RemotePage(); rp.helloWorld(); })</script></body></html>");
+                                 await context.Response.WriteAsync(@"<html><head><script src=""node_modules/requirejs/require.js""></script></head><body><script type=""text/javascript"">require.config({paths:{'earthml-temply-headless':'node_modules/earthml-temply-headless/artifacts/src'}}); require(['earthml-temply-headless/remotepage/remotepage'],(RemotePageModule)=>{console.log(RemotePageModule);let rp = new RemotePageModule.RemotePage(); rp.helloWorld(); })</script></body></html>");
                                  return;
                              }
 
@@ -168,7 +162,7 @@ namespace EarthML.TemplyHeadless.Cli
 
 
                 Url = host.ServerFeatures.Get<IServerAddressesFeature>().Addresses
-                     .Select(a => a.Replace("://+", "://localhost")).FirstOrDefault();
+                     .Select(a => a.Replace("://+", "://localhost").Replace("[::]","127.0.0.1")).FirstOrDefault();
             }
 
 
@@ -212,6 +206,17 @@ namespace EarthML.TemplyHeadless.Cli
                     {
                         FileName = @"""C:\Program Files\nodejs\node.exe""",
                         Arguments = $@"""C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js"" install {package}",
+                        WorkingDirectory = Path.Combine(Directory.GetCurrentDirectory(), runningFolder),
+
+                    });
+                    npminstall.WaitForExit();
+                }
+                else
+                {
+                    var npminstall = Process.Start(new ProcessStartInfo
+                    {
+                        FileName = @"npm",
+                        Arguments = $"install {package}",
                         WorkingDirectory = Path.Combine(Directory.GetCurrentDirectory(), runningFolder),
 
                     });
