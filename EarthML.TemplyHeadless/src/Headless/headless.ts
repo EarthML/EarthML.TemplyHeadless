@@ -67,7 +67,7 @@ const eventHandlers: { [key: string]: (event, page: puppeteer.Page, options: Tem
     "PAGE_RENDER": async (event, page, options) => {
         await page.screenshot({ path: options.outputPrefix + "/" + event.data.path });
     },
-    "FILE_EXISTS": (event, page, options) => {
+    "FILE_EXIST": (event, page, options) => {
         return new Promise((resolve, reject) => {
 
             fs.exists(options.outputPrefix + event.data.path, (exists) => {

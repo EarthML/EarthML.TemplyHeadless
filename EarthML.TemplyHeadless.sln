@@ -3,9 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27309.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthML.TemplyHeadless.Cli", "src\EarthML.TemplyHeadless.Cli\EarthML.TemplyHeadless.Cli.csproj", "{7C70B970-7CBD-4D00-B994-A707FAC8CBE7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EarthML.TemplyHeadless.Cli", "src\EarthML.TemplyHeadless.Cli\EarthML.TemplyHeadless.Cli.csproj", "{7C70B970-7CBD-4D00-B994-A707FAC8CBE7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthML.TemplyHeadless", "EarthML.TemplyHeadless\EarthML.TemplyHeadless.csproj", "{B9CFAE50-0B0A-4FEB-95FE-6AF34CAF5536}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EarthML.TemplyHeadless", "EarthML.TemplyHeadless\EarthML.TemplyHeadless.csproj", "{B9CFAE50-0B0A-4FEB-95FE-6AF34CAF5536}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "root", "root", "{3C739BFD-C8D0-4514-8BB0-893B3ABD6EC1}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
