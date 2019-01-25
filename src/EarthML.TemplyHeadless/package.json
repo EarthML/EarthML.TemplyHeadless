@@ -1,14 +1,15 @@
 {
-	"version": "0.0.1",
-	"name": "earthml-temply-headless",
-  "dependencies": {
-  },
+  "version": "0.0.1",
+  "name": "earthml-temply-headless",
+  "dependencies": {},
   "devDependencies": {
     "@types/puppeteer": "latest",
     "@types/websocket": "latest",
     "@types/node": "latest",
-    "typescript": "2.6.2",
+    "typescript": "3.1.6",
     "websocket": "^1.0.25"
   },
-  "files": ["artifacts/**/*"]
+  "files": [
+    "artifacts/**/*"
+  ]
 }

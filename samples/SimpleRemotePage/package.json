@@ -1,7 +1,7 @@
 {
-	"version": "1.0.0",
-	"name": "mypackage",
-	"private": true,
+  "version": "1.0.0",
+  "name": "mypackage",
+  "private": true,
   "devDependencies": {
     "earthml-temply-headless": "0.0.1"
   }
