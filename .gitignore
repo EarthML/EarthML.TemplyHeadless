@@ -262,3 +262,4 @@ __pycache__/
 /src/EarthML.TemplyHeadless.Cli/output
 /src/EarthML.TemplyHeadless.Cli/tmphost
 /src/EarthML.TemplyHeadless.Cli/out
+/samples/ApplicationInsightsGraphGenerator/wwwroot

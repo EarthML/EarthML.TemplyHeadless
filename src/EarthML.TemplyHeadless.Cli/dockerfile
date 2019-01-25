@@ -62,6 +62,7 @@ WORKDIR /app
 RUN mkdir tmphost
  
 VOLUME ["/tmphost"]
+VOLUME ["/data"]
  
 COPY out .
  

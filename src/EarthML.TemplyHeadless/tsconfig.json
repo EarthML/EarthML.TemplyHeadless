@@ -18,13 +18,9 @@
       "dom",
       "es6", // updated from es5 to es6 to avoid "cannot find  name Map in index.d.ts JSHandle"
       "es2015.promise"
-    ],
-
+    ]
   },
   "include": [
     "src"
-  ],
-  "exclude": [
-    "node_modules/*"
   ]
 }

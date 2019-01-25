@@ -12,10 +12,11 @@ declare var requirejs;
 
 export class RemotePage {
 
+    config: any;
     connection: WebSocket = null;
     tasks: { [key: string]: Deferred } = {};
 
-    constructor(config?, connection?, tasks?) {
+    constructor() {
 
     }
 
@@ -39,10 +40,13 @@ export class RemotePage {
         return broadcastEvent(this.connection, "COMPLETE", data, this.tasks);
     }
 
-    renderImage() {
-        return broadcastEvent(this.connection, "PAGE_RENDER", { path: "test.jpg" }, this.tasks);
+    renderImage(path:string="test.jpg") {
+        return broadcastEvent(this.connection, "PAGE_RENDER", { path }, this.tasks);
     }
 
+    installDependencies(dps) {
+        return broadcastEvent(this.connection, "INSTALL_DEPENDENCIES", dps, this.tasks);
+    }
     initialize() {
         return new Promise(async (resolve, reject) => {
             this.connection = new WebSocket('ws://127.0.0.1:1337');
@@ -55,7 +59,8 @@ export class RemotePage {
                 });
 
                 let extraConfig = await broadcastEvent(this.connection, "LOADED", { dependencies: { "es6-promise": "es6-promise/dist" } }, this.tasks);
-                console.log(extraConfig);
+                this.config = extraConfig;
+                console.log(JSON.stringify(extraConfig));
                // requirejs.config(extraConfig);
 
                 resolve(extraConfig);

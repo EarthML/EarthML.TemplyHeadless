@@ -5,6 +5,9 @@ import * as puppeteer from "puppeteer";
 import { Logger } from "../Logging/Logger";
 import { log } from "util";
 import { resolve } from "dns";
+import * as fetch from "isomorphic-fetch";
+
+
 
 
 export interface TemplyHeadlessOptions {
@@ -16,6 +19,7 @@ export interface TemplyHeadlessOptions {
     inputPrefix: string;
     data: any;
     url: string;
+    headlessHost: string;
 }
 
 const defaultTemplyHeadlessOptions = {
@@ -57,12 +61,25 @@ type EventsTypes = "CHANGE_VIEWPORT_SIZE" | "PAGE_RENDER";
 
 const eventHandlers: { [key: string]: (event, page: puppeteer.Page, options: TemplyHeadlessOptions) => Promise<any> } = {
     "LOADED": (event, page, options) => {
-        return new Promise((resolve, reject) => resolve({ config: { 'main': options.data } }));
+        return new Promise((resolve, reject) => resolve(options.data));
     },
     "CHANGE_VIEWPORT_SIZE": async (event, page) => {
         console.log(JSON.stringify(event))
         await page.setViewport(event.data)
 
+    },
+    "INSTALL_DEPENDENCIES": async (event, page, options) => {
+        console.log(event.data);
+        console.log(`${options.headlessHost}/installDependencies`);
+        try {
+            let response = await fetch(`${options.headlessHost}/installDependencies`, { method: "POST", body: JSON.stringify(event.data) })
+            console.log(response.ok);
+
+            return response.ok;
+        } catch (err) {
+            console.log(err);
+        }
+       
     },
     "PAGE_RENDER": async (event, page, options) => {
         await page.screenshot({ path: options.outputPrefix + "/" + event.data.path });
@@ -79,8 +96,8 @@ const eventHandlers: { [key: string]: (event, page: puppeteer.Page, options: Tem
     },
     "READ_FILE": (event, page, options) => {
         return new Promise((resolve, reject) => {
-            fs.readFile(options.inputPrefix + event.data.path, event.data.encoding || 'utf8', (err, data) => {
-
+            fs.readFile(options.inputPrefix + "/" + event.data.path, event.data.encoding || 'utf8', (err, data) => {
+                console.log(`Read file from ${event.data.path}: ${err}`);
                 if (err) {
                     reject(err);
                 } else {
@@ -93,7 +110,7 @@ const eventHandlers: { [key: string]: (event, page: puppeteer.Page, options: Tem
     },
     "WRITE_FILE": (event, page, options) => {
         return new Promise((resolve, reject) => {
-            fs.writeFile(options.outputPrefix + event.data.path, event.data.content, function (err) {
+            fs.writeFile(options.outputPrefix + "/" + event.data.path, event.data.content, function (err) {
                 if (err) {
                     reject(err);
                 } else {
@@ -105,7 +122,7 @@ const eventHandlers: { [key: string]: (event, page: puppeteer.Page, options: Tem
 }
 
 
-function runRemotePage(wsServer,page,options,logger) {
+function runRemotePage(wsServer, page, options: TemplyHeadlessOptions,logger) {
     return new Promise(async (resolve, reject) => {
 
       
@@ -141,7 +158,9 @@ function runRemotePage(wsServer,page,options,logger) {
                                 } else {
                                     console.log("ACCEPTING COMPLETION");
                                     console.log(event.data);
-                                    resolve(event.data);
+                                    if (options.headless) {
+                                        resolve(event.data);
+                                    }
                                 }
 
                             }
@@ -165,6 +184,7 @@ function runRemotePage(wsServer,page,options,logger) {
             connection.on('close', function (connection) {
                 // close user connection
                 console.log("HostRunner websocket connection closed");
+                reject();
             });
         });
         logger.logInformation("Opening {url}",options.url);
@@ -209,7 +229,8 @@ export default async function (options: TemplyHeadlessOptions, callback: (error,
         logger.logInformation("ChromeInstance created with {headless} and arguments {@chromeHeadlessArguments}", options.headless, options.chromeHeadlessArguments);
 
         let page = await chromeInstance.newPage();
-        page.on('console', msg => console.log('PAGE LOG:', ...msg.args));
+        // @ts-ignore
+        page.on('console', msg => console.log('PAGE LOG:', msg.text()));
         page.setViewport(options.size);
 
         logger.logInformation("Chrome Page created and viewport set to {@size}", options.size);

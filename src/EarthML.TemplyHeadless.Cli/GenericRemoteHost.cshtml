@@ -19,8 +19,16 @@
         }
 
         require.config({
-            paths: { 'earthml-temply-headless': 'node_modules/earthml-temply-headless/artifacts/src' },
+            paths: {
+            //    'earthml-temply-headless': 'node_modules/earthml-temply-headless/artifacts/src'
+            },
             packages: [
+                {
+                    name: "earthml-temply-headless",
+                    location: 'node_modules/earthml-temply-headless/artifacts/src',
+                    main:"index"
+
+                },
                 {
                     name: "RemoteModule",
                     location: getParameterByName("remote-location"),
@@ -34,8 +42,14 @@
              
             let rp = new RemotePageModule.default();
 
-            rp.initialize().then(() => {
-                rp.run();
+            rp.initialize().then(async () => {
+                try {
+                    await rp.run();
+                } catch (err) {
+                    console.log(err);
+                    rp.complete({ err });
+
+                }
             });
         })
 
