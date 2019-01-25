@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
-    <TypeScriptToolsVersion>2.6</TypeScriptToolsVersion>
+    <TypeScriptToolsVersion>3.1</TypeScriptToolsVersion>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
@@ -15,4 +15,5 @@
     <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.0" />
   </ItemGroup>
 
+  
 </Project>
