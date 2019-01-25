@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.NodeServices;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using RazorLight;
 using System;
@@ -186,12 +187,20 @@ namespace EarthML.TemplyHeadless.Cli
 
                             await next();
 
+                           Console.WriteLine($"{context.Request.Path} {context.Response.StatusCode}" );
+
                         });
                         foreach(var volumne in Volumes)
                         {
 
                             appbuilder.Map(volumne.Split(':').Last(), (b) =>
                             {
+                                b.Use(async (ctx, next) =>
+                                {
+                                    await next();
+
+                                    Console.WriteLine($"{ctx.Request.Path} {ctx.Response.StatusCode}");
+                                });
                                 b.UseStaticFiles(new StaticFileOptions { FileProvider = new PhysicalFileProvider(string.Join(":",volumne.Split(':').Reverse().Skip(1).Reverse())) });
 
                             });
@@ -294,7 +303,7 @@ namespace EarthML.TemplyHeadless.Cli
                 bool isWindows = System.Runtime.InteropServices.RuntimeInformation
                                                                .IsOSPlatform(OSPlatform.Windows);
 
-                if (!Directory.Exists(Path.Combine(runningFolder, "node_modules", package)))
+                if (!Directory.Exists(Path.Combine(runningFolder, "node_modules", package)) || !Directory.EnumerateFiles( Path.Combine(runningFolder, "node_modules", package)).Any())
                 {
                     if (isWindows)
                     {
