@@ -3,12 +3,45 @@
 
 import { broadcastEvent } from "./boardcastEvent";
 import { Deferred } from "./Deferred";
+import { error } from "util";
 
 
 interface NodeRequire {
     config(c: any);
 }
 declare var requirejs;
+
+
+const parts = {};
+
+function unwrapMessage(message: MessageEvent) {
+    let event = JSON.parse(message.data);
+    console.log("recieved message" + typeof (message.data) + " " + typeof (event.partId));
+  
+
+    if ("partId" in event) {
+        
+        console.log(`Recieved part ${event.partId} ${event.part.length}`);
+        if (!(event.id in parts)) {
+            parts[event.id] = [];
+        }
+        parts[event.id].push(event.part);
+
+        if (!event.last) {
+            return;
+        }
+        console.log(`Recieved last part ${event.partId} ${event.part.length}`);
+       // event.data = JSON.parse(parts[event.id].join(""));
+        var str = parts[event.id].join("");
+        delete parts[event.id];
+        return JSON.parse(str);
+
+    } else {
+        console.log(event.type);
+    }
+
+    return event;
+}
 
 export class RemotePage {
 
@@ -36,7 +69,7 @@ export class RemotePage {
     }
 
     complete(data) {
-        console.log("completing");
+        console.log("completing1");
         return broadcastEvent(this.connection, "COMPLETE", data, this.tasks);
     }
 
@@ -79,10 +112,22 @@ export class RemotePage {
 
             this.connection.onmessage = (message)=> {
                 // try to decode json (I assume that each message from server is json)
+                console.log(message);
                 try {
-                    var json = JSON.parse(message.data);
-                    if (json.id in this.tasks) {
-                        this.tasks[json.id].resolve(json.data);
+
+                    var json = unwrapMessage(message);
+                    if (json) {
+                        //var json = JSON.parse(message.data);
+
+                       
+                        if (json.id in this.tasks) {
+                            if ("err" in json) {
+                                this.tasks[json.id].reject(json.err);
+                            } else {
+                                this.tasks[json.id].resolve(json.data);
+                            }
+
+                        }
                     }
                 } catch (e) {
                     console.log('This doesn\'t look like a valid JSON: ', message.data);
